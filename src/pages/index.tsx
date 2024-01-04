@@ -6,7 +6,10 @@ import { UserButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
+  // const hello = api.post.getAll.useQuery({ text: "from tRPC" });
+  const {data} = api.post.getAll.useQuery();
+  console.log(data);
+  
 
   return (
     <>
@@ -19,7 +22,13 @@ export default function Home() {
         <header>
           <UserButton afterSignOutUrl="/"/>
         </header>
-        <div>Your home page's content can go here.</div>
+        <div>
+          {data?.map((post) => (
+            <div key={post.id}>
+              {post?.content}
+            </div>
+          ))}
+        </div>
       </main>
     </>
   );
