@@ -14,6 +14,7 @@ dayjs.extend(relativeTime);
 
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
+import { LoadingPage } from "~/components/loading";
 
 const CreatePostWizard = () => {
   const {user} = useUser();
@@ -60,7 +61,7 @@ export default function Home() {
   const {data, isLoading} = api.post.getAll.useQuery();
   if (isLoading) {
     return (
-      <div>Loading ...</div>
+      <LoadingPage />
     )
   }
   if (!data) {
