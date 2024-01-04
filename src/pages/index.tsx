@@ -12,7 +12,8 @@ dayjs.extend(relativeTime);
 // import { UserButton } from "@clerk/nextjs";
 
 
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
 const CreatePostWizard = () => {
   const {user} = useUser();
