@@ -14,7 +14,7 @@ const filterUserForClient = (user: User) => {
     externalUserName:
       user.externalAccounts.find((externalAccount) => {
         externalAccount.provider === "oauth_github";
-      })?.username || null,
+      })?.username ?? null,
   };
 };
 
