@@ -3,8 +3,6 @@ import Image from "next/image";
 import { 
   SignInButton, 
   SignOutButton, 
-  SignedOut, 
-  SignedIn, 
   useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -57,19 +55,33 @@ const PostView = (props: PostWithUsers) => {
   )
 }
 
+const Feed = () => {
+  const {data, isLoading: postsLoading} = api.post.getAll.useQuery();
+
+  if (postsLoading) return <LoadingPage />
+  if (!data) return <div>Something went wrong!</div>
+
+  return (
+    <div className="flex flex-col">
+      {[...data, ...data].map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id}/>
+      ))}
+    </div>
+  )
+}
+
 export default function Home() {
-  const {data, isLoading} = api.post.getAll.useQuery();
-  if (isLoading) {
-    return (
-      <LoadingPage />
-    )
-  }
-  if (!data) {
-    return (
-      <div>Something went wrong!</div>
-    )
-  }
-  
+  const {isLoaded: userLoaded, isSignedIn} = useUser();
+
+  //start fetching posts
+  // react-query will cache the result to use in subsequent fetches
+  api.post.getAll.useQuery();
+
+  // return empty div if user is not loaded yet
+  if (!userLoaded)  return <div />;
+  // if (isLoading) return <LoadingPage />
+  // if (!data) return <div>Something went wrong!</div>
+ 
 
   return (
     <>
@@ -81,17 +93,15 @@ export default function Home() {
       <main className="flex justify-center h-screen">
         <div className="h-full w-full border-x border-slate-500 md:max-w-2xl">
           <div className="border-b border-slate-500 p-4">
-            <SignedIn>
-              <CreatePostWizard />
-              <SignOutButton/>
-            </SignedIn>
-            <SignedOut><SignInButton/></SignedOut>
+            {isSignedIn && 
+              <div>
+                <CreatePostWizard />
+                <SignOutButton/>
+              </div>
+            }
+            {!isSignedIn && <SignInButton/>}
           </div>
-          <div className="flex flex-col">
-            {[...data, ...data].map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id}/>
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
