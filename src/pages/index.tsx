@@ -60,10 +60,10 @@ const CreatePostWizard = () => {
       }}
       disabled={isPosting}
       />
-    {input !== "" && !isPosting &&
+    {input !== "" && !isPosting && (
       <button onClick={() => mutate({content: input})} disabled={isPosting}>
         Post
-      </button>
+      </button>)
     }
     {isPosting && (
       <div className="flex items-center justify-center">
