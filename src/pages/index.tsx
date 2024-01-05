@@ -49,7 +49,7 @@ const PostView = (props: PostWithUsers) => {
           <span>{`@ ${author.username}`}</span>
           <span className="font-thin">{`. ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
   </div>
   )
@@ -79,9 +79,6 @@ export default function Home() {
 
   // return empty div if user is not loaded yet
   if (!userLoaded)  return <div />;
-  // if (isLoading) return <LoadingPage />
-  // if (!data) return <div>Something went wrong!</div>
- 
 
   return (
     <>
