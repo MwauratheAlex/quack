@@ -13,9 +13,17 @@ dayjs.extend(relativeTime);
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 import { LoadingPage } from "~/components/loading";
+import { useState } from "react";
 
 const CreatePostWizard = () => {
   const {user} = useUser();
+  const ctx = api.useContext();
+  const {mutate, isLoading: isPosting} = api.post.create.useMutation({onSuccess: () => {
+    setInput("");
+    ctx.post.getAll.invalidate();
+  }});
+  const [input, setInput] = useState("");
+
   if (!user) return null;
 
   return (
@@ -28,11 +36,20 @@ const CreatePostWizard = () => {
       width={56}/>
     <input 
       placeholder="Type some emojis!" 
-      className="bg-transparent grow outline-none"/>
+      className="bg-transparent grow outline-none"
+      type="text"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      disabled={isPosting}
+      />
+    <button onClick={() => mutate({content: input})}>
+      Post
+    </button>
   </div>
   )
 }
 type PostWithUsers = RouterOutputs["post"]["getAll"][number]
+
 const PostView = (props: PostWithUsers) => {
   const {post, author}= props;
   return (
@@ -63,7 +80,7 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {[...data, ...data].map((fullPost) => (
+      {data.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id}/>
       ))}
     </div>
