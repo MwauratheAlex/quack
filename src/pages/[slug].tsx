@@ -1,9 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
 import { api } from "~/utils/api";
-import { db } from "~/server/db";
-import type { GetStaticProps, NextPage } from "next";
 import { PostView } from "~/components/postview";
+import { PageLayout } from "~/components/layout";
+import { LoadingPage } from "~/components/loading";
+import { generateSSGHelper } from "~/server/helpers/ssghelper";
+import type { GetStaticProps, NextPage } from "next";
 
 const ProfileFeed = (props: {userId: string}) => {
   const {data, isLoading} = api.post.getPostByUserId.useQuery({userId: props.userId})
@@ -53,31 +55,18 @@ const ProfilePage:NextPage<{username: string}> = ({username}) => {
   );
 };
 
-export default ProfilePage;
-
-import { appRouter } from "~/server/api/root";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import superjson from "superjson"
-import { PageLayout } from "~/components/layout";
-import { LoadingPage } from "~/components/loading";
-import { P } from "@upstash/redis/zmscore-a4ec4c2a";
-
 
 export const getStaticProps: GetStaticProps = async (context) => {
   // now the loading state is never hit, cool!
-  const ssg = createServerSideHelpers({
-    router: appRouter,
-    ctx: {db, userId: null},
-    transformer: superjson,
-  });
-
+  const ssg = generateSSGHelper();
+  
   const slug = context.params?.slug;
   if (typeof slug !== "string") throw new Error("no slug");
   const username = slug.replace("@", "")
   // prefetch the user hence the absence of the loading state
   // we are doing this because userdata will rarely change???
   await ssg.profile.getUserByUsername.prefetch({username})
-
+  
   return {
     props: {
       trpcState: ssg.dehydrate(),
@@ -85,3 +74,5 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   }
 }
+
+export default ProfilePage;
