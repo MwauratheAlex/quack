@@ -3,6 +3,23 @@ import Image from "next/image";
 import { api } from "~/utils/api";
 import { db } from "~/server/db";
 import type { GetStaticProps, NextPage } from "next";
+import { PostView } from "~/components/postview";
+
+const ProfileFeed = (props: {userId: string}) => {
+  const {data, isLoading} = api.post.getPostByUserId.useQuery({userId: props.userId})
+
+  if (isLoading) return <LoadingPage />
+
+  if (!data || data.length === 0) return <div>User has not posted.</div>
+
+  return (
+    <div className="flex flex-col">
+      {data.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id}/>
+      ))}  
+    </div>
+  )
+}
 
 export const getStaticPaths = () => {
   return {paths: [], fallback: "blocking"}
@@ -30,6 +47,7 @@ const ProfilePage:NextPage<{username: string}> = ({username}) => {
         <div className="h-[64px]" />
         <div className="p-4 text-2xl">{`@${data.username}`}</div>
         <div className="w-full border-b border-slate-500"></div>
+        <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
   );
@@ -41,6 +59,9 @@ import { appRouter } from "~/server/api/root";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import superjson from "superjson"
 import { PageLayout } from "~/components/layout";
+import { LoadingPage } from "~/components/loading";
+import { P } from "@upstash/redis/zmscore-a4ec4c2a";
+
 
 export const getStaticProps: GetStaticProps = async (context) => {
   // now the loading state is never hit, cool!
