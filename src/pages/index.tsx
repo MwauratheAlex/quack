@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { 
   SignInButton, 
   SignOutButton, 
@@ -19,6 +20,8 @@ import toast from "react-hot-toast";
 const CreatePostWizard = () => {
   const {user} = useUser();
   const ctx = api.useContext();
+  // would be wise to use a form library like react-hook-form and zod to handle errors
+  // and validate the input before sending it to the server
   const {mutate, isLoading: isPosting} = api.post.create.useMutation({
     onSuccess: () => {
       setInput("");
@@ -87,8 +90,10 @@ const PostView = (props: PostWithUsers) => {
       />
       <div className="flex flex-col">
         <div className="flex text-slate-300 font-bold gap-1">
-          <span>{`@ ${author.username}`}</span>
-          <span className="font-thin">{`. ${dayjs(post.createdAt).fromNow()}`}</span>
+          <Link href={`/@${author.username}`}><span>{`@ ${author.username}`}</span></Link>
+          <Link href={`/post/${post.id}`}>
+            <span className="font-thin">{`. ${dayjs(post.createdAt).fromNow()}`}</span>
+          </Link>
         </div>
         <span className="text-2xl">{post.content}</span>
       </div>
