@@ -34,6 +34,10 @@ const CreatePostWizard = () => {
         toast.error("Failed to post. Please try again later!")
       }
     }});
+
+  // awful. use react hook forms
+  // can share validator on backend and front end
+  // one emoji validator shared
   const [input, setInput] = useState("");
 
   if (!user) return null;

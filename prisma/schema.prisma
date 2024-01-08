@@ -11,6 +11,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// syncronise db with clerk
+// model post to be directly mapped to user with relation
+// clerk webhooks
+// vercel og images
 model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())

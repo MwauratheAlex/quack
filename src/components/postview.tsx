@@ -12,6 +12,7 @@ export const PostView = (props: PostWithUsers) => {
   const {post, author}= props;
   return (
   <div key={post.id} className="border-b border-slate-500 p-4 gap-4 flex">
+    {/* work on the links. eg. clickable card */}
     <Image
       src={author.profileImgUrl} 
       alt={`@${author.username} profile picture`}
