@@ -5,7 +5,13 @@ import { authMiddleware } from "@clerk/nextjs";
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your Middleware
 export default authMiddleware({
   // gotem: remove getAll from protection
-  publicRoutes: ["/", "/api/trpc/post.getAll"],
+  publicRoutes: [
+    "/",
+    "/api/trpc/post.getAll",
+    "/post/:id",
+    "/@:username",
+    "/api/trpc/post.getPostByUserId,profile.getUserByUsername",
+  ],
 });
 
 export const config = {
